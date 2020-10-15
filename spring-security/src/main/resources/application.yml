@@ -3,3 +3,4 @@ spring:
     user:
       name: caoshenyang
       password: 123456
+      roles: USER,ADMIN
