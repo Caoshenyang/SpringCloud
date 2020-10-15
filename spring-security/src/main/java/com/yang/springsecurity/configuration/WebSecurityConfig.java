@@ -53,19 +53,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .withUser("lisi").password("222").roles("USER");
     }
-//
-    /**
-     * 默认的密码加密器
-     */
-    private static class InMemoryPasswordEncoder implements PasswordEncoder {
-        @Override
-        public String encode(CharSequence rawPassword) {
-            return rawPassword.toString();
-        }
 
-        @Override
-        public boolean matches(CharSequence rawPassword, String encodedPassword) {
-            return rawPassword.equals(encodedPassword);
-        }
-    }
 }
