@@ -1,5 +1,6 @@
 package com.yang.springsecurity.configuration;
 
+import com.yang.springsecurity.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,6 +24,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private DataSource dataSource;
+    @Autowired
+    private MyUserDetailsService myUserDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -42,23 +45,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable();
     }
 
-    /**
-     * 基于默认数据库数据模型用户设置
-     */
-    @Bean
-    public UserDetailsService userDetailsService() {
-        JdbcUserDetailsManager manager = new JdbcUserDetailsManager();
-        manager.setDataSource(dataSource);
-        if (!manager.userExists("aa")) {
-            //MD5 加密 名文 111 加密后 698d51a19d8a121ce581499d7b701668
-            manager.createUser(User.withUsername("aa").password("{MD5}698d51a19d8a121ce581499d7b701668").roles("USER").build());
-
-        }
-        if (!manager.userExists("bb")) {
-            manager.createUser(User.withUsername("bb").password("{noop}222").roles("USER").build());
-        }
-        return manager;
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(myUserDetailsService).passwordEncoder(NoOpPasswordEncoder.getInstance());
     }
+
+//    /**
+//     * 基于默认数据库数据模型用户设置
+//     */
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        JdbcUserDetailsManager manager = new JdbcUserDetailsManager();
+//        manager.setDataSource(dataSource);
+//        if (!manager.userExists("aa")) {
+//            //MD5 加密 名文 111 加密后 698d51a19d8a121ce581499d7b701668
+//            manager.createUser(User.withUsername("aa").password("{MD5}698d51a19d8a121ce581499d7b701668").roles("USER").build());
+//
+//        }
+//        if (!manager.userExists("bb")) {
+//            manager.createUser(User.withUsername("bb").password("{noop}222").roles("USER").build());
+//        }
+//        return manager;
+//    }
 
 
 //    /**
