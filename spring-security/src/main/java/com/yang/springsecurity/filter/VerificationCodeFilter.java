@@ -48,4 +48,5 @@ public class VerificationCodeFilter extends OncePerRequestFilter {
         if (StringUtils.isEmpty(captcha) || StringUtils.isEmpty(captchaCode) || !captcha.equals(captchaCode))
             throw new VerificationCodeException("图形验证码校验异常");
     }
+
 }
