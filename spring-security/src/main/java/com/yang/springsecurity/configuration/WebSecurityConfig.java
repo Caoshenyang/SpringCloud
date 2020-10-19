@@ -52,7 +52,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(myUserDetailsService).passwordEncoder(NoOpPasswordEncoder.getInstance());
     }
 
-
     @Bean
     public Producer kaptcha() {
         //配置图形验证码的基本参数
