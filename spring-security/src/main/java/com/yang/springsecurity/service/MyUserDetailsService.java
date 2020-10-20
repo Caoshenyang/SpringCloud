@@ -17,6 +17,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println("查询数据库");
         //查询用户信息
         User user = userMapper.findByUserName(username);
         if (user==null){

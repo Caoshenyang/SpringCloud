@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,15 +34,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private MyUserDetailsService myUserDetailsService;
     @Autowired
-    private MyAuthenticationDetailsSource myWebAuthenticationDetailsSource;
+    private AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> myWebAuthenticationDetailsSource;
     @Autowired
-    private MyAuthenticationProvider authenticationProvider;
+    private AuthenticationProvider myAuthenticationProvider;
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        //应用AuthenticationProvider
-        auth.authenticationProvider(authenticationProvider);
         auth.userDetailsService(myUserDetailsService).passwordEncoder(NoOpPasswordEncoder.getInstance());
+        //应用MyAuthenticationProvider
+        auth.authenticationProvider(myAuthenticationProvider);
     }
 
     @Override
@@ -63,7 +64,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable();
         //将过滤器添加在UsernamePasswordAuthenticationFilter之前
-        //http.addFilterBefore(new VerificationCodeFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(new VerificationCodeFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
 
