@@ -28,7 +28,6 @@ public class VerificationCodeFilter extends OncePerRequestFilter {
                 verificationCode(httpServletRequest);
                 filterChain.doFilter(httpServletRequest, httpServletResponse);
             } catch (VerificationCodeException e) {
-                System.out.println(e);
                 authenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, e);
             } catch (ServletException e) {
                 e.printStackTrace();

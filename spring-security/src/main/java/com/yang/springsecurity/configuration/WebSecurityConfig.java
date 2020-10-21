@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
@@ -41,33 +42,40 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         //添加AuthenticationProvider
-//        auth.userDetailsService(myUserDetailsService).passwordEncoder(NoOpPasswordEncoder.getInstance());
+        auth.userDetailsService(myUserDetailsService).passwordEncoder(NoOpPasswordEncoder.getInstance());
         //应用MyAuthenticationProvider
-        auth.authenticationProvider(myAuthenticationProvider);
+//        auth.authenticationProvider(myAuthenticationProvider);
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource);
         http.authorizeRequests()
                 .antMatchers("/admin/api/**").hasRole("ADMIN")
                 .antMatchers("/user/api/**").hasRole("USER")
-                .antMatchers("/app/api/**","/captcha.jpg").permitAll()
+                .antMatchers("/app/api/**", "/captcha.jpg").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .formLogin()
                 //AuthenticationDetailsSource
-                .authenticationDetailsSource(myWebAuthenticationDetailsSource)
+//                .authenticationDetailsSource(myWebAuthenticationDetailsSource)
                 .loginPage("/myLogin.html")
                 // 指定处理登录请求的路径,修改请求的路径，默认为/login
                 .loginProcessingUrl("/mylogin").permitAll()
                 .failureHandler(new MyAuthenticationFailureHandler())
                 .and()
+                //增加自动登录功能，默认为散列加密
+                .rememberMe()
+                .userDetailsService(myUserDetailsService)
+                .tokenRepository(jdbcTokenRepository)
+//                .key("autologin")
+                .and()
                 .csrf().disable();
-        //将过滤器添加在UsernamePasswordAuthenticationFilter之前
-//        http.addFilterBefore(new VerificationCodeFilter(), UsernamePasswordAuthenticationFilter.class);
+//        将过滤器添加在UsernamePasswordAuthenticationFilter之前
+        http.addFilterBefore(new VerificationCodeFilter(), UsernamePasswordAuthenticationFilter.class);
     }
-
 
 
     @Bean
