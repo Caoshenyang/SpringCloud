@@ -4,3 +4,17 @@ spring:
     password: root
     url: jdbc:mysql://localhost:3306/springSecurityDemo?useUnicode=true&&characterEncoding=utf8&&useSSL=false&&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
+
+
+
+
+
+
+#server:
+#  servlet:
+#    session:
+#      timeout: 90

@@ -5,8 +5,6 @@ import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
 import com.yang.springsecurity.filter.VerificationCodeFilter;
 import com.yang.springsecurity.handler.MyAuthenticationFailureHandler;
-import com.yang.springsecurity.provider.MyAuthenticationDetailsSource;
-import com.yang.springsecurity.provider.MyAuthenticationProvider;
 import com.yang.springsecurity.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -19,8 +17,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
@@ -30,6 +28,8 @@ import java.util.Properties;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+//    @Autowired
+//    FindByIndexNameSessionRepository sessionRepository;
     @Autowired
     private DataSource dataSource;
     @Autowired
@@ -38,6 +38,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> myWebAuthenticationDetailsSource;
     @Autowired
     private AuthenticationProvider myAuthenticationProvider;
+//    @Autowired
+//    private SpringSessionBackedSessionRegistry redisSessionRegistry;
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -72,11 +74,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .tokenRepository(jdbcTokenRepository)
 //                .key("autologin")
                 .and()
+                .sessionManagement()
+                //设置最大会话数为1
+                .maximumSessions(1)
+                //阻止新会话登录，默认为false
+                //.maxSessionsPreventsLogin(true)
+                //.sessionRegistry(redisSessionRegistry)
+                .and()
+                .invalidSessionUrl("/")
+                .and()
                 .csrf().disable();
 //        将过滤器添加在UsernamePasswordAuthenticationFilter之前
         http.addFilterBefore(new VerificationCodeFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher(){
+        return new HttpSessionEventPublisher();
+    }
+//    @Bean
+//    SpringSessionBackedSessionRegistry sessionRegistry() {
+//        return new SpringSessionBackedSessionRegistry(sessionRepository);
+//    }
 
     @Bean
     public Producer kaptcha() {
