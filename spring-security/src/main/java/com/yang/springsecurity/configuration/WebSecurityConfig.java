@@ -14,28 +14,19 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
-import org.springframework.security.web.session.HttpSessionEventPublisher;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.util.Properties;
 
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-//    @Autowired
-//    FindByIndexNameSessionRepository sessionRepository;
     @Autowired
     private DataSource dataSource;
     @Autowired
@@ -44,8 +35,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> myWebAuthenticationDetailsSource;
     @Autowired
     private AuthenticationProvider myAuthenticationProvider;
-//    @Autowired
-//    private SpringSessionBackedSessionRegistry redisSessionRegistry;
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -117,10 +106,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //            });
     }
 
-    @Bean
-    public HttpSessionEventPublisher httpSessionEventPublisher(){
-        return new HttpSessionEventPublisher();
-    }
+//    @Bean
+//    public HttpSessionEventPublisher httpSessionEventPublisher(){
+//        return new HttpSessionEventPublisher();
+//    }
 //    @Bean
 //    SpringSessionBackedSessionRegistry sessionRegistry() {
 //        return new SpringSessionBackedSessionRegistry(sessionRepository);
