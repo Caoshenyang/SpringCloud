@@ -14,14 +14,20 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.util.Properties;
 
 
@@ -86,6 +92,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable();
 //        将过滤器添加在UsernamePasswordAuthenticationFilter之前
         http.addFilterBefore(new VerificationCodeFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.logout()
+//            //指定接受注销请求的路径
+//            .logoutUrl("/logout")
+//            //注销成功，重定向到该路径下
+//            .logoutSuccessUrl("/")
+//            //注册成功之后处理方式
+//            .logoutSuccessHandler(new LogoutSuccessHandler() {
+//                @Override
+//                public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
+//
+//                }
+//            })
+//            //使该用户的HttpSession失效
+//            .invalidateHttpSession(true)
+//                //注销成功，删除指定cookie
+//            .deleteCookies("remember-me")
+//                //用于注销的处理方式，允许自定义一些清理策略
+//            .addLogoutHandler(new LogoutHandler() {
+//                @Override
+//                public void logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) {
+//
+//                }
+//            });
     }
 
     @Bean
