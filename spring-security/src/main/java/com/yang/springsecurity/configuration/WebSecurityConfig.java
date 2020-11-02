@@ -21,9 +21,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.server.ServerWebExchange;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Properties;
 
 
@@ -83,7 +89,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .invalidSessionUrl("/")
                 .and()
-                .csrf().disable();
+                .csrf().disable()
+                .cors();
 //        将过滤器添加在UsernamePasswordAuthenticationFilter之前
         http.addFilterBefore(new VerificationCodeFilter(), UsernamePasswordAuthenticationFilter.class);
 //        http.logout()
@@ -119,6 +126,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //    SpringSessionBackedSessionRegistry sessionRegistry() {
 //        return new SpringSessionBackedSessionRegistry(sessionRepository);
 //    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        //允许从百度站点跨域
+        corsConfiguration.setAllowedOrigins(Arrays.asList("https://www.baidu.com"));
+        //允许GET和POST方法
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET","POST"));
+        //允许携带凭证
+        corsConfiguration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        //对所有URL生效
+        source.registerCorsConfiguration("/**",corsConfiguration);
+        return source;
+   }
 
     @Bean
     public Producer kaptcha() {
